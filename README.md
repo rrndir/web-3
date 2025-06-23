@@ -1,4 +1,4 @@
-public/frontend/image/wg.png
+(public/frontend/image/wg.png)
 # Warung Games
 
 **Warung Games** is an online marketplace for physical video games and gaming accessories. Built for gamers, collectors, and enthusiasts, this platform allows users to browse, search, and purchase a wide range of console games, merchandise, and gaming gear. 
