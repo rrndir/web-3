@@ -11,8 +11,7 @@
         <div class="col-md-4 col-sm-6 col-xs-6"> 
             <div class="product product-single"> 
                 <div class="product-thumb"> 
- 
-                    <div class="product-label"> 
+                <div class="product-label"> 
                         <span>Kategori</span> 
                         <span class="sale">{{ $row->kategori->nama_kategori }}</span> 
                     </div> 
@@ -56,4 +55,4 @@ plus"></i></button>
 <!-- /STORE --> 
  
 <!-- end template--> 
-@endsection
+@endsection 

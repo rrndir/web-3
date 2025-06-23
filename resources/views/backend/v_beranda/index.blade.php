@@ -9,7 +9,7 @@
                 <h5 class="card-title"> {{$judul}}</h5>
                 <div class="alert alert-success" role="alert">
                     <h4 class="alert-heading"> Selamat Datang, {{ Auth::user()->nama }}</h4>
-                    Aplikasi Toko Online dengan hak akses yang anda miliki sebagai
+                    Website Warung Game dengan hak akses yang anda miliki sebagai
                     <b>
                         @if (Auth::user()->role ==1)
                         Super Admin
@@ -17,9 +17,9 @@
                         Admin
                         @endif
                     </b>
-                    ini adalah halaman utama dari aplikasi Web Programming. Studi Kasus Toko Online.
+                    ini adalah halaman utama dari Website Warung Games
                     <hr>
-                    <p class="mb-0">Kuliah..? BSI Aja !!!</p>
+                    <p class="mb-0">Beli dan Mainkan</p>
                 </div>
             </div>
         </div>

@@ -54,7 +54,7 @@
                                 <div class="form-group">
                                     <label>Kategori</label>
                                     <select name="kategori_id" class="form-control @error('kategori_id') is-invalid @enderror">
-                                        <option value="" selected> - Pilih Katagori - </option>
+                                        <option value="" selected> - Pilih Kategori - </option>
                                         @foreach ($kategori as $row)
                                         @if (old('kategori_id', $edit->kategori_id) == $row->id)
                                         <option value="{{ $row->id }}" selected> {{ $row->nama_kategori }} </option>

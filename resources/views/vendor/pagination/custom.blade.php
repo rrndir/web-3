@@ -15,9 +15,6 @@
     @endif 
  
     {{-- Array Of Links --}} 
- 
-
- 
     @if (is_array($element)) 
     @foreach ($element as $page => $url) 
     @if ($page == $paginator->currentPage()) 
@@ -36,4 +33,4 @@
     <li class="disabled"><span>&raquo;</span></li> 
     @endif 
 </ul> 
-@endif 
+@endif

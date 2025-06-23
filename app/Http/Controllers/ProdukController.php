@@ -36,7 +36,6 @@ class ProdukController extends Controller
         ]);
     }
 
-
     /**
      * Store a newly created resource in storage.
      */
@@ -292,6 +291,4 @@ class ProdukController extends Controller
             'produk' => $produk,
         ]);
     }
-
-   
-} 
+}

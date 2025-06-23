@@ -1,4 +1,3 @@
- 
 @extends('v_layouts.app') 
 @section('content') 
 <!-- template --> 
@@ -8,7 +7,7 @@
     <div class="col-md-12"> 
         <div class="billing-details"> 
             <div class="section-title"> 
-                <h3 class="title"> WUTWUTWUTWUTUWTUWUTT </h3> 
+                <h3 class="title">{{ $judul }} </h3> 
             </div> 
         </div> 
     </div> 
@@ -17,9 +16,15 @@
         <div class="col-md-6"> 
             <div id="product-main-view"> 
                 <div class="product-view"> 
-                    <img src="{{ asset('storage/img-produk/thumb_lg_' . $row->foto) }}" 
-alt=""> 
+                    <img src="{{ asset('storage/img-produk/thumb_lg_' . $row->foto) }}" alt=""> 
                 </div> 
+                <div class="product product-video">
+                    <div class="product-view">
+                        
+                    </div>
+                </div>
+
+            
                 @foreach ($fotoProdukTambahan as $item) 
                 <div class="product-view"> 
                     @if ($item->produk_id == $row->id) 
@@ -29,11 +34,8 @@ alt="">
                 </div> 
                 @endforeach 
             </div> 
-            <div id="product-view"> 
- 
- 
- 
-                <div class="product-view"> 
+            <div id="product-view">
+            <div class="product-view"> 
                     <img src="{{ asset('storage/img-produk/thumb_sm_' . $row->foto) }}" 
 alt=""> 
                 </div> 
@@ -50,23 +52,23 @@ alt="">
         <div class="col-md-6"> 
             <div class="product-body"> 
                 <div class="product-label"> 
-                    <span>MACAM MACAM</span> 
-                    <span class="sale">CUKURUKUUUKKK</span> 
+                    <span>Kategori</span> 
+                    <span class="sale">{{ $row->kategori->nama_kategori }}</span> 
                 </div> 
-                <h2 class="product-name"> KUCING BAWA HOKI </h2> 
-                <h3 class="product-price">Rp. 999999999
+                <h2 class="product-name">{{ $row->nama_produk }}</h2> 
+                <h3 class="product-price">Rp. {{ number_format($row->harga, 0, ',', '.') }} 
 </h3> 
                 <p> 
-                    SEMOGA BANYAK ONG NYAAAA
+                    {!! $row->detail !!} 
                 </p> 
                 <div class="product-options"> 
                     <ul class="size-option"> 
                         <li><span class="text-uppercase">Berat:</span></li> 
-                        10000 Gram 
+                        {{ $row->berat }} Gram 
                     </ul> 
                     <ul class="size-option"> 
                         <li><span class="text-uppercase">Stok:</span></li> 
-                        unlimited
+                        {{ $row->stok }} 
                     </ul> 
                 </div> 
  
@@ -76,7 +78,7 @@ alt="">
                         @csrf 
                         <button type="submit" class="primary-btn add-to-cart"><i class="fa 
 fa-shopping-cart"></i> 
-                            BELI lah</button> 
+                            Buy now</button> 
                     </form> 
                 </div> 
             </div> 
@@ -87,4 +89,4 @@ fa-shopping-cart"></i>
 <!-- /Product Details --> 
  
 <!-- end template--> 
-@endsection 
+@endsection

@@ -44,43 +44,69 @@
         <!-- top Header -->
         <div id="top-header">
             <div class="container">
-                <div class="pull-left">
-                    <span>Selamat datang di toko online</span>
-                </div>
+                <h2 style="color:white;">Warung <span style="color:#ad0f0f">Game</span></h2>
             </div>
         </div>
         <!-- /top Header -->
 
-        <!-- header -->
-        <div id="header">
-            <div class="container">
-                <div class="pull-left">
-                    <!-- Logo -->
-                    <div class="header-logo">
-                        <a class="logo" href="#">
-                            <img src="{{ asset('image/logo.png') }}" alt="">
-                        </a>
-                    </div>
-                    <!-- /Logo -->
+       <!-- HEADER -->
+<header>
+    <div id="header">
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
 
-                    <!-- Search -->
+            <!-- Logo -->
+            <div class="header-logo" style="display: flex; align-items: center; gap: 15px;">
+                <a class="logo" href="#">
+                    <img src="{{ asset('image/wg.png') }}" style="border-radius: 10px; height: 50px;" alt="">
+                </a>
 
-                    <!-- /Search -->
+                <!-- Menu NAV berpindah ke sini -->
+                <div class="menu-nav open" id="menuNav">
+                    <ul class="menu-list" style="display: flex; gap: 15px; margin: 0; padding: 0; list-style: none;">
+                        <li><a href="{{ route('beranda') }}">Beranda</a></li>
+                        <li><a href="{{ route('produk.all') }}">Produk</a></li>
+                        <li><a href="{{ route('lokasi') }}">Lokasi</a></li>
+                        <li><a href="#">Hubungi Kami</a></li>
+                    </ul>
                 </div>
-                <div class="pull-right">
-                    <ul class="header-btns">
-                        <!-- Cart -->
-                        <li class="header-cart dropdown default-dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-                                <div class="header-btns-icon">
-                                    <i class="fa fa-shopping-cart"></i>
-                                </div>
-                                <strong class="text-uppercase">Keranjang</strong>
-                            </a>
-                        </li>
-                        <!-- /Cart -->
+            </div>
 
-                        <!-- Account -->
+            <!-- Akun + Keranjang -->
+            <div class="pull-right">
+                <ul class="header-btns" style="display: flex; align-items: center; gap: 15px;">
+                    <!-- Cart -->
+                    <li class="header-cart dropdown default-dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                            <div class="header-btns-icon">
+                                <i class="fa fa-shopping-cart"></i>
+                            </div>
+                            <strong class="text-uppercase">Keranjang</strong>
+                        </a>
+                    </li>
+
+                    <!-- Account -->
+                    @if (Auth::check())
+                        <li class="header-account dropdown default-dropdown">
+                            <div class="dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="true">
+                                <div class="header-btns-icon">
+                                    <i class="fa fa-user-o"></i>
+                                </div>
+                                <strong class="text-uppercase">{{ Auth::user()->nama }}<i class="fa fa-caret-down"></i></strong>
+                            </div>
+                            <ul class="custom-menu">
+                                <li><a href="{{ route('customer.akun', ['id' => Auth::user()->id]) }}"><i class="fa fa-user-o"></i> Akun Saya</a></li>
+                                <li><a href="#"><i class="fa fa-check"></i> History</a></li>
+                                <li>
+                                    <a href="#" onclick="event.preventDefault(); document.getElementById('keluar-app').submit();">
+                                        <i class="fa fa-power-off"></i> Keluar
+                                    </a>
+                                    <form id="keluar-app" action="{{ route('logout') }}" method="POST" class="display:none">
+                                        @csrf
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @else
                         <li class="header-account dropdown default-dropdown">
                             <div class="dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="true">
                                 <div class="header-btns-icon">
@@ -88,117 +114,97 @@
                                 </div>
                                 <strong class="text-uppercase">Akun Saya<i class="fa fa-caret-down"></i></strong>
                             </div>
-                            <a href="#" class="text-uppercase">Login</a>
-                            <ul class="custom-menu">
-                                <li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
-                                <li><a href="#"><i class="fa fa-heart-o"></i> My Wishlist</a></li>
-                                <li><a href="#"><i class="fa fa-exchange"></i> Compare</a></li>
-                                <li><a href="#"><i class="fa fa-check"></i> Checkout</a></li>
-                                <li><a href="#"><i class="fa fa-unlock-alt"></i> Login</a></li>
-                                <li><a href="#"><i class="fa fa-user-plus"></i> Create An Account</a></li>
-                            </ul>
+                            <a href="{{ route('auth.redirect') }}" class="text-uppercase">Login</a>
                         </li>
-                        <!-- /Account -->
+                    @endif
 
-                        <!-- Mobile nav toggle-->
-                        <li class="nav-toggle">
-                            <button class="nav-toggle-btn main-btn icon-btn"><i class="fa fa-bars"></i></button>
-                        </li>
-                        <!-- / Mobile nav toggle -->
-                    </ul>
-                </div>
+                    <!-- Mobile nav toggle -->
+                    <li class="nav-toggle">
+                        <button class="nav-toggle-btn main-btn icon-btn"><i class="fa fa-bars"></i></button>
+                    </li>
+                </ul>
             </div>
-            <!-- header -->
         </div>
-        <!-- container -->
-    </header>
-    <!-- /HEADER -->
+    </div>
+</header>
+<!-- /HEADER -->
 
-    <!-- NAVIGATION -->
-    <div id="navigation">
-        <!-- container -->
-        <div class="container">
-            <div id="responsive-nav">
+<!-- NAVIGATION (Kategori saja) -->
+<div id="navigation">
+    <div class="container">
+        <div id="responsive-nav">
             @php 
-            $kategori = DB::table('kategori')->orderBy('nama_kategori', 'asc')->get(); 
-            @endphp 
-            @if (request()->segment(1) == '' || request()->segment(1) == 'beranda') 
+                $kategori = DB::table('kategori')->orderBy('nama_kategori', 'asc')->get(); 
+            @endphp
 
-            <!-- category nav -->  
+            <!-- category nav (tetap di bawah) -->
+            <div class="category-nav toggleable-nav" id="categoryNav">
+                <span class="category-header toggleable-header">Kategori <i class="fa fa-list"></i></span>
+                <ul class="category-list">
+                    @foreach ($kategori as $row)
+                        <li><a href="{{ route('produk.kategori', $row->id) }}">{{ $row->nama_kategori }}</a></li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <div class="category-nav"> 
-                <span class="category-header">Kategori <i class="fa fa-list"></i></span> 
-                <ul class="category-list"> 
-                    @foreach ($kategori as $row) 
-                    <li><a href="{{ route('produk.kategori', $row->id) }}">{{ $row->nama_kategori }}</a></li> 
-                    @endforeach 
-                </ul> 
+<!-- CSS -->
+<style>
+    .toggleable-nav ul {
+        display: none;
+    }
+
+    .toggleable-nav.open ul {
+        display: block;
+    }
+
+    .toggleable-header {
+        cursor: pointer;
+    }
+</style>
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const headers = document.querySelectorAll('.toggleable-header');
+        headers.forEach(header => {
+            header.addEventListener('click', function () {
+                this.parentElement.classList.toggle('open');
+            });
+        });
+    });
+</script>
+
+
+
+@if (request()->segment(1) == '' || request()->segment(1) == 'beranda')
+<!-- HOME -->
+<div id="home" class="full-banner">
+    <div id="home-slick">
+        <!-- banner -->
+        <div class="banner banner-1">
+            <img src="{{ asset('frontend/banner/banner web.jpeg') }}"alt="Banner Wukong">
+            <div class="banner-caption text-center">
                 
-                <ul class="category-list"> 
-
-                </div> 
-                @else 
-                <div class="category-nav show-on-click"> 
-                    <span class="category-header">Kategori <i class="fa fa-list"></i></span> 
-                    <ul class="category-list"> 
-                        @foreach ($kategori as $row) 
-                        <li><a href="{{ route('produk.kategori', $row->id) }}">{{ $row->nama_kategori }}</a></li> 
-                        @endforeach 
-                    </ul> 
-                </div> 
-                <!-- /category nav --> 
-                 @endif
-               <!-- menu nav --> 
-                <div class="menu-nav"> 
-                    <span class="menu-header">Menu <i class="fa fa-bars"></i></span> 
-                    <ul class="menu-list"> 
-                        <li><a href="{{ route('beranda') }}">Beranda</a></li> 
-                        <li><a href="{{ route('produk.all') }}">Produk</a></li>  
-                        <li><a href="#">Lokasi</a></li> 
-                        <li><a href="#">Hubungi Kami</a></li> 
-                    </ul> 
-                </div> 
-                <!-- menu nav --> 
+                
             </div>
         </div>
-        <!-- /container -->
-    </div>
-    <!-- /NAVIGATION -->
-    @if (request()->segment(1) == '' || request()->segment(1) == 'beranda') 
-    <!-- HOME -->
-    <div id="home">
-        <!-- container -->
-        <div class="container">
-            <!-- home wrap -->
-            <div class="home-wrap">
-                <!-- home slick -->
-                <div id="home-slick">
-                    <!-- banner -->
-                    <div class="banner banner-1">
-                        </div>
-                    </div>
-                    <!-- /banner -->
-
-                    <!-- banner -->
-                    <div class="banner banner-1">
-                        </div>
-                    </div>
-                    <!-- /banner -->
-
-                    <!-- banner -->
-                    <div class="banner banner-1">
-                        </div>
-                    </div>
-                    <!-- /banner -->
-                </div>
-                <!-- /home slick -->
+        <div class="banner banner-1">
+            <img src="{{ asset('frontend/banner/banner-wukong.jpg') }}"alt="Banner Wukong">
+            <div class="banner-caption text-center">
+                <h1>AUTUMN SALE</h1>
+                <h3 class="red-color font-weak">DISKON 10%</h3>
+                <button class="primary-btn">BELI SEKARANG!!</button>
             </div>
-            <!-- /home wrap -->
         </div>
-        <!-- /container -->
     </div>
-    <!-- /HOME -->
-    @endif
+</div>
+@endif
+
+
+
     <!-- section -->
     <div class="section">
         <!-- container -->
@@ -213,11 +219,11 @@
                         <!-- widget product -->
                         <div class="product product-widget">
                             <div class="product-thumb">
-                                <img src="{{ asset('frontend/img/thumb-product01.jpg') }}" alt="">
+                                <img src="{{ asset('frontend/img/Headset-Gaming-JETEX-G7-1.jpg') }}" style="border-radius:10px" alt="">
                             </div>
                             <div class="product-body">
-                                <h2 class="product-name"><a href="#">Product Name Goes Here</a></h2>
-                                <h3 class="product-price">$32.50 <del class="product-old-price">$45.00</del></h3>
+                                <h2 class="product-name"><a href="#">Headset Gaming</a></h2>
+                                <h3 class="product-price">499000 <del class="product-old-price">599000</del></h3>
                                 <div class="product-rating">
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
@@ -232,17 +238,17 @@
                         <!-- widget product -->
                         <div class="product product-widget">
                             <div class="product-thumb">
-                                <img src="{{ asset('frontend/img/thumb-product01.jpg') }}" alt="">
+                                <img src="{{ asset('frontend/img/rdr2icon.jpg') }}" style="border-radius:10px" alt="">
                             </div>
                             <div class="product-body">
-                                <h2 class="product-name"><a href="#">Product Name Goes Here</a></h2>
-                                <h3 class="product-price">$32.50</h3>
+                                <h2 class="product-name"><a href="#">Red Dead Redemption</a></h2>
+                                <h3 class="product-price">799000 <del class="product-old-price"> 899000</del></h3>
                                 <div class="product-rating">
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
-                                    <i class="fa fa-star-o empty"></i>
+                                    <i class="fa fa-star"></i>
                                 </div>
                             </div>
                         </div>
@@ -250,17 +256,14 @@
                     </div>
                     <!-- /aside widget -->
                     <!-- aside widget -->
-                    <!-- aside widget --> 
-
                     <div class="aside"> 
                         <h3 class="aside-title">Filter Kategori</h3> 
                         <ul class="list-links"> 
-                            @foreach ($kategori as $row) 
-                            <li><a href="{{ route('produk.kategori', $row->id) }}">{{ $row->nama_kategori }}</a></li> 
-                            @endforeach 
+                        @foreach ($kategori as $row) 
+                        <li><a href="{{ route('produk.kategori', $row->id) }}">{{ $row->nama_kategori }}</a></li> 
+                        @endforeach 
                         </ul> 
                     </div> 
-<!-- /aside widget -->
                     <!-- /aside widget -->
                 </div>
                 <!-- /ASIDE -->
@@ -270,9 +273,9 @@
                     <!-- store top filter -->
                     <!-- /store top filter -->
 
-                   <!-- @yieldAwal -->
-                    @yield('content')
-                    <!-- @yieldAkhir-->
+                    <!-- @yieldAwal --> 
+                    @yield('content') 
+                    <!-- @yieldAkhir--> 
 
                     <!-- store bottom filter -->
 
@@ -303,7 +306,7 @@
                         </div>
                         <!-- /footer logo -->
 
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                        <p>Warung Game adalah toko terpercaya untuk para gamer sejati! Menyediakan berbagai kebutuhan gaming mulai dari game original, aksesoris gaming, hingga perangkat keras seperti keyboard mechanical dan mouse RGB. Nikmati pengalaman belanja mudah, harga terjangkau, dan pelayanan cepat!</p>
 
                         <!-- footer social -->
                         <ul class="footer-social">
@@ -323,11 +326,11 @@
                     <div class="footer">
                         <h3 class="footer-header">My Account</h3>
                         <ul class="list-links">
-                            <li><a href="#">My Akun</a></li>
-                            <li><a href="#">BSI</a></li>
-                            <li><a href="#">HOKI</a></li>
-                            <li><a href="#">JAYA</a></li>
-                            <li><a href="#">BAIK</a></li>
+                            <li><a href="#">My Account</a></li>
+                            <li><a href="#">My Wishlist</a></li>
+                            <li><a href="#">Compare</a></li>
+                            <li><a href="#">Checkout</a></li>
+                            <li><a href="#">Login</a></li>
                         </ul>
                     </div>
                 </div>
@@ -340,10 +343,10 @@
                     <div class="footer">
                         <h3 class="footer-header">Customer Service</h3>
                         <ul class="list-links">
-                            <li><a href="#">TENTAN KAMI</a></li>
-                            <li><a href="#">PENGEMBALIAN DANA</a></li>
-                            <li><a href="#">PRODAK KAMI</a></li>
-                            <li><a href="#">HAPPY SHOPPNG</a></li>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Shiping & Return</a></li>
+                            <li><a href="#">Shiping Guide</a></li>
+                            <li><a href="#">FAQ</a></li>
                         </ul>
                     </div>
                 </div>
@@ -352,13 +355,15 @@
                 <!-- footer subscribe -->
                 <div class="col-md-3 col-sm-6 col-xs-6">
                     <div class="footer">
-                        <h3 class="footer-header">Stay Connected</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
+                        <h3 class="footer-header">Yuk Gabung Bersama Warung Game!</h3>
+                        <p>Bersama kita ciptakan pengalaman gaming yang lebih seru dan solid!
+
+Ingin update game terbaru, diskon eksklusif, atau sekadar ngobrol bareng sesama gamer?</p>
                         <form>
                             <div class="form-group">
                                 <input class="input" placeholder="Enter Email Address">
                             </div>
-                            <button class="primary-btn">Join Newslatter</button>
+                            <button class="primary-btn">Join Us</button>
                         </form>
                     </div>
                 </div>
@@ -372,9 +377,9 @@
                     <!-- footer copyright -->
                     <div class="footer-copyright">
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        Copyright &copy;<script>
+                        Warung Game &copy;<script>
                             document.write(new Date().getFullYear());
-                        </script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                        </script> All rights reserved</i> by <a href="https://colorlib.com" target="_blank">Kelompok 1</a>
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </div>
                     <!-- /footer copyright -->
@@ -393,6 +398,10 @@
     <script src="{{ asset('frontend/js/nouislider.min.js') }}"></script>
     <script src="{{ asset('frontend/js/jquery.zoom.min.js') }}"></script>
     <script src="{{ asset('frontend/js/main.js') }}"></script>
+    <a href="#home" onclick="scrollToSection('home')">BERANDA</a>
+
+
+</script>
 
 </body>
 

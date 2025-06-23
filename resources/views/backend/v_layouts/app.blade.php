@@ -53,14 +53,14 @@
                         <b class="logo-icon p-l-10">
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                             <!-- Dark Logo icon -->
-                            <img src="{{ asset('image/icon_univ_bsi.png') }}" alt="homepage" class="light-logo" />
+                            <img src="{{ asset('image/wg.png') }}" width="50" height="50" alt="homepage" class="light-logo" />
 
                         </b>
                         <!--End Logo icon -->
                         <!-- Logo text -->
                         <span class="logo-text">
                             <!-- dark Logo text -->
-                            <img src="{{ asset('image/logo_text.png') }}" alt="homepage" class="light-logo" />
+                            <h4 style="color:white;">Warung <span style="color:#ad0f0f">Game</span></h4>
 
                         </span>
                         <!-- Logo icon -->
@@ -154,10 +154,14 @@
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav" class="p-t-30">
+
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ route('backend.beranda') }}" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu">Beranda</span></a>
                         </li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ route('backend.user.index') }}" aria-expanded="false"><i class="mdi mdi-account"></i><span class="hide-menu">User</span></a>
                         </li>
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ route('backend.customer.index') }}" aria-expanded="false"><i class="mdi mdi-account-multiple"></i><span class="hide-menu">Customer</span></a>
+                         </li>
+
                         <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="mdi mdi-shopping"></i><span class="hide-menu">Data Produk </span></a>
                             <ul aria-expanded="false" class="collapse  first-level">
                                 <li class="sidebar-item"><a href="{{ route('backend.kategori.index') }}" class="sidebar-link"><i class="mdi mdi-chevron-right"></i><span class="hide-menu"> Kategori </span></a>
@@ -224,7 +228,7 @@
             <!-- footer -->
             <!-- ============================================================== -->
             <footer class="footer text-center">
-                Web Programming. Studi Kasus Toko Online <a href="https://bsi.ac.id/">Kuliah..? BSI Aja !!!</a>
+                Warung Games <a href="https://bsi.ac.id/">Beli dan mainkan</a>
             </footer>
             <!-- ============================================================== -->
             <!-- End footer -->
