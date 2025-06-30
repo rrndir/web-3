@@ -8,6 +8,20 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\OrderController;
+
+use Illuminate\Support\Facades\Http;
+
+Route::get('/list-ongkir', function () {
+    $response = Http::withHeaders([
+        'key' => 'rvcH6BhS88b849394055016cw9zx3R1J' // GANTI dengan API key asli dari RajaOngkir
+    ])->get('https://api.rajaongkir.com/starter/province');
+
+    dd($response->json());
+});
+
+
+
 
 Route::get('/', function () {
     // return view('welcome');
@@ -44,6 +58,30 @@ Route::resource('backend/produk', ProdukController::class, ['as' => 'backend'])-
 
 // Route untuk lokasi kami
 Route::get('/lokasi', [LokasiController::class, 'index'])->name('lokasi');
+
+// Group route untuk customer
+Route::middleware('is.customer')->group(function () {
+    // Route untuk menampilkan halaman akun customer
+    Route::get('/customer/akun/{id}', [CustomerController::class, 'akun'])
+        ->name('customer.akun');
+
+    // Route untuk mengupdate data akun customer
+    Route::put('/customer/updateakun/{id}', [CustomerController::class, 'updateAkun'])
+        ->name('customer.updateakun');
+
+    // Route untuk menambahkan produk ke keranjang
+    Route::post('add-to-cart/{id}', [OrderController::class, 'addToCart'])->name('order.addToCart');
+    Route::get('cart', [OrderController::class, 'viewCart'])->name('order.cart');
+});
+
+Route::get('/list-ongkir', function () {
+    $response = Http::withHeaders([
+        'key' => 'rvcH6BhS88b849394055016cw9zx3R1J' // GANTI dengan API key asli dari RajaOngkir
+    ])->get('https://api.rajaongkir.com/starter/province');
+
+    dd($response->json());
+});
+
 
 
 // Route untuk menambahkan foto
