@@ -70,27 +70,20 @@ class OrderController extends Controller
         return redirect()->route('order.cart')->with('success', 'Jumlah produk berhasil diperbarui');
     }
 
-    public function removeFromCart(Request $request, $id)
+    public function removeFromCart($id)
     {
-        $customer = Customer::where('user_id', Auth::id())->first();
-        $order = Order::where('customer_id', $customer->id)->where('status', 'pending')->first();
-
-        if ($order) {
-            $orderItem = OrderItem::where('order_id', $order->id)->where('produk_id', $id)->first();
-
-            if ($orderItem) {
-                $order->total_harga -= $orderItem->harga * $orderItem->quantity;
-                $orderItem->delete();
-
-                if ($order->total_harga <= 0) {
-                    $order->delete();
-                } else {
-                    $order->save();
-                }
-            }
-        }
-        return redirect()->route('order.cart')->with('success', 'Produk berhasil dihapus dari keranjang');
+        $item = OrderItem::findOrFail($id);
+    
+        // Opsional: cek apakah item milik user saat ini
+        // if ($item->order->user_id !== auth()->id()) {
+        //     return back()->with('error', 'Tidak diizinkan.');
+        // }
+    
+        $item->delete();
+    
+        return back()->with('success', 'Produk berhasil dihapus dari keranjang');
     }
+    
 
     public function selectShipping_(Request $request)
     {

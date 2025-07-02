@@ -61,18 +61,19 @@ Route::get('/lokasi', [LokasiController::class, 'index'])->name('lokasi');
 
 // Group route untuk customer
 Route::middleware('is.customer')->group(function () {
-    // Route untuk menampilkan halaman akun customer
-    Route::get('/customer/akun/{id}', [CustomerController::class, 'akun'])
-        ->name('customer.akun');
-
-    // Route untuk mengupdate data akun customer
-    Route::put('/customer/updateakun/{id}', [CustomerController::class, 'updateAkun'])
-        ->name('customer.updateakun');
+    Route::get('/customer/akun/{id}', [CustomerController::class, 'akun'])->name('customer.akun');
+    Route::put('/customer/updateakun/{id}', [CustomerController::class, 'updateAkun'])->name('customer.updateakun');
 
     // Route untuk menambahkan produk ke keranjang
     Route::post('add-to-cart/{id}', [OrderController::class, 'addToCart'])->name('order.addToCart');
+
+    // Route untuk keranjang belanja
     Route::get('cart', [OrderController::class, 'viewCart'])->name('order.cart');
+    Route::put('cart/update/{id}', [OrderController::class, 'updateCart'])->name('order.updateCart');
+    Route::delete('cart/remove/{id}', [OrderController::class, 'removeFromCart'])->name('order.removeFromCart');
+    Route::post('cart/shipping', [OrderController::class, 'chooseShipping'])->name('order.chooseShipping');
 });
+
 
 Route::get('/list-ongkir', function () {
     $response = Http::withHeaders([
