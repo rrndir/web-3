@@ -11,7 +11,9 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        User::create([
+        User::updateOrCreate([
+            'email' => 'admin@gmail.com',
+        ], [
             'nama' => 'Administrator',
             'email' => 'admin@gmail.com',
             'role' => '1',
@@ -19,7 +21,9 @@ class DatabaseSeeder extends Seeder
             'hp' => '0812345678901',
             'password' => bcrypt('P@55word'),
         ]);
-        User::create([
+        User::updateOrCreate([
+            'email' => 'aji@gmail.com',
+        ], [
             'nama' => 'Aji',
             'email' => 'aji@gmail.com',
             'role' => '0',
@@ -27,21 +31,21 @@ class DatabaseSeeder extends Seeder
             'hp' => '0812345678902',
             'password' => bcrypt('P@55word'),
         ]);
-        #data kategori
-        Kategori::create([
-            'nama_kategori' => 'Brownies',
-        ]);
-        Kategori::create([
-            'nama_kategori' => 'Combro',
-        ]);
-        Kategori::create([
-            'nama_kategori' => 'Dawet',
-        ]);
-        Kategori::create([
-            'nama_kategori' => 'Mochi',
-        ]);
-        Kategori::create([
-            'nama_kategori' => 'Wingko',
-        ]);
+
+        Kategori::whereIn('nama_kategori', ['Brownies', 'Combro', 'Dawet', 'Mochi', 'Wingko'])->delete();
+
+        $categories = [
+            'Action Adventure',
+            'Action RPG',
+            'Open World',
+            'RPG',
+            'Sports',
+        ];
+
+        foreach ($categories as $categoryName) {
+            Kategori::updateOrCreate(['nama_kategori' => $categoryName]);
+        }
+
+        $this->call(GameCatalogSeeder::class);
     }
 }

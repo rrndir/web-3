@@ -21,7 +21,11 @@ class LoginController extends Controller
             'password' => 'required'
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt([
+            'email' => $credentials['email'],
+            'password' => $credentials['password'],
+            'role' => 1,
+        ])) {
             if (Auth::user()->status == 0) {
                 Auth::logout();
                 return back()->with('error', 'User belum aktif');

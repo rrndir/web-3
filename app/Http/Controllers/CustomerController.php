@@ -67,6 +67,13 @@ class CustomerController extends Controller
     // Redirect ke Google
     public function redirect()
     {
+        if (!config('services.google.client_id') || !config('services.google.client_secret')) {
+            return redirect('/beranda')->with(
+                'msgError',
+                'Login Google belum dikonfigurasi. Isi GOOGLE_CLIENT_ID dan GOOGLE_CLIENT_SECRET pada file .env.'
+            );
+        }
+
         return Socialite::driver('google')->redirect();
     }
 

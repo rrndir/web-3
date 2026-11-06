@@ -73,7 +73,7 @@
                                         <span class="input-group-text bg-warning text-white" id="basic-addon2"><i class="ti-pencil"></i></span>
                                     </div>
                                     <input type="password" class="form-control form-control-lg @error('password') is-invalid @enderror" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" name="password" id="" value="{{old('password')}}">
-                                    @error('email')
+                                    @error('password')
                                     <span class=" invalid-feedback alert-danger" role="alert">
                                         {{$message}}
                                     </span>

@@ -272,11 +272,19 @@ class ProdukController extends Controller
 
     public function produkKategori($id)
     {
-        $kategori = Kategori::orderBy('nama_kategori', 'desc')->get();
-        $produk = Produk::where('kategori_id', $id)->where('status', 1)->orderBy('updated_at', 'desc')->paginate(6);
-        return view('v_produk.produkkategori', [
+        $kategoriAktif = Kategori::findOrFail($id);
+        $kategori = Kategori::orderBy('nama_kategori', 'asc')->get();
+        $produk = Produk::with('kategori')
+            ->where('kategori_id', $kategoriAktif->id)
+            ->where('status', 1)
+            ->orderBy('updated_at', 'desc')
+            ->paginate(6)
+            ->withQueryString();
+
+        return view('v_produk.produkKategori', [
             'judul' => 'Filter Kategori',
             'kategori' => $kategori,
+            'kategoriAktif' => $kategoriAktif,
             'produk' => $produk,
         ]);
     }

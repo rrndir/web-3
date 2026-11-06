@@ -5,6 +5,20 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        if (window.location.pathname === '/beranda' || window.location.pathname === '/') {
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+            }
+            if (window.location.search !== '') {
+                history.replaceState(null, '', window.location.pathname);
+            }
+            window.scrollTo(0, 0);
+        }
+    </script>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('image/icon_univ_bsi.png') }}">
@@ -28,6 +42,88 @@
 
     <!-- Custom stlylesheet -->
     <link type="text/css" rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
+    <style>
+        #aside .product-widget .product-thumb {
+            width: 50px;
+        }
+        #aside .product-widget .product-thumb > img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        #aside .product-widget .product-body {
+            padding-left: 62px;
+            min-height: 58px;
+            padding-top: 4px;
+        }
+        #aside .product-widget .product-name {
+            font-size: 12px;
+            line-height: 16px;
+            margin-bottom: 4px;
+        }
+        #aside .product-widget .product-price {
+            font-size: 15px;
+            line-height: 18px;
+            margin-bottom: 3px;
+        }
+        #store .row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+        #store .row > .col-md-4,
+        #store .row > .col-sm-6,
+        #store .row > .col-xs-6 {
+            float: none;
+        }
+        #store .product.product-single {
+            height: calc(100% - 30px);
+            margin-top: 15px;
+            margin-bottom: 15px;
+            background: #30323A;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #store .product-thumb {
+            height: 320px;
+            overflow: hidden;
+        }
+        #store .product-thumb > img {
+            display: block;
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            object-position: center;
+        }
+        #store .product-thumb > .product-label {
+            z-index: 25;
+        }
+        #store .product-single .product-body {
+            min-height: 145px;
+            box-sizing: border-box;
+            padding: 18px 20px 20px;
+        }
+        #store .product-single .product-price {
+            display: block;
+            min-height: 24px;
+            margin-bottom: 8px;
+        }
+        #store .product-single .product-name {
+            min-height: 42px;
+            margin: 0;
+            line-height: 21px;
+        }
+        @media only screen and (max-width: 767px) {
+            #store .product-thumb,
+            #store .product-thumb > img {
+                height: 300px;
+            }
+            #store .row > .col-xs-6 {
+                width: 100%;
+            }
+        }
+    </style>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -39,6 +135,11 @@
 </head>
 
 <body>
+    @if(session()->has('msgError'))
+        <div style="position:fixed;top:20px;right:20px;z-index:9999;max-width:420px;padding:12px 18px;background:#f2dede;color:#a94442;border:1px solid #ebccd1;border-radius:4px;">
+            {{ session('msgError') }}
+        </div>
+    @endif
     <!-- HEADER -->
     <header>
         <!-- top Header -->
@@ -216,43 +317,59 @@
                     <!-- aside widget -->
                     <div class="aside">
                         <h3 class="aside-title">Top Rated Product</h3>
-                        <!-- widget product -->
-                        <div class="product product-widget">
-                            <div class="product-thumb">
-                                <img src="{{ asset('frontend/img/Headset-Gaming-JETEX-G7-1.jpg') }}" style="border-radius:10px" alt="">
-                            </div>
-                            <div class="product-body">
-                                <h2 class="product-name"><a href="#">Headset Gaming</a></h2>
-                                <h3 class="product-price">499000 <del class="product-old-price">599000</del></h3>
-                                <div class="product-rating">
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star-o empty"></i>
+                        @isset($produk)
+                            @forelse($produk->take(2) as $row)
+                                <div class="product product-widget">
+                                    <div class="product-thumb">
+                                        <img src="{{ asset('storage/img-produk/thumb_md_' . $row->foto) }}" style="border-radius:10px" alt="{{ $row->nama_produk }}">
+                                    </div>
+                                    <div class="product-body">
+                                        <h2 class="product-name">
+                                            <a href="{{ route('produk.detail', $row->id) }}">{{ $row->nama_produk }}</a>
+                                        </h2>
+                                        <h3 class="product-price">Rp {{ number_format($row->harga, 0, ',', '.') }}</h3>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="product product-widget">
+                                    <div class="product-thumb">
+                                        <img src="{{ asset('frontend/img/Headset-Gaming-JETEX-G7-1.jpg') }}" style="border-radius:10px" alt="Headset Gaming">
+                                    </div>
+                                    <div class="product-body">
+                                        <h2 class="product-name"><a href="#">Headset Gaming</a></h2>
+                                        <h3 class="product-price">499000 <del class="product-old-price">599000</del></h3>
+                                    </div>
+                                </div>
+                                <div class="product product-widget">
+                                    <div class="product-thumb">
+                                        <img src="{{ asset('frontend/img/rdr2icon.jpg') }}" style="border-radius:10px" alt="Red Dead Redemption">
+                                    </div>
+                                    <div class="product-body">
+                                        <h2 class="product-name"><a href="#">Red Dead Redemption</a></h2>
+                                        <h3 class="product-price">799000 <del class="product-old-price">899000</del></h3>
+                                    </div>
+                                </div>
+                            @endforelse
+                        @else
+                            <div class="product product-widget">
+                                <div class="product-thumb">
+                                    <img src="{{ asset('frontend/img/Headset-Gaming-JETEX-G7-1.jpg') }}" style="border-radius:10px" alt="Headset Gaming">
+                                </div>
+                                <div class="product-body">
+                                    <h2 class="product-name"><a href="#">Headset Gaming</a></h2>
+                                    <h3 class="product-price">499000 <del class="product-old-price">599000</del></h3>
                                 </div>
                             </div>
-                        </div>
-                        <!-- /widget product -->
-
-                        <!-- widget product -->
-                        <div class="product product-widget">
-                            <div class="product-thumb">
-                                <img src="{{ asset('frontend/img/rdr2icon.jpg') }}" style="border-radius:10px" alt="">
-                            </div>
-                            <div class="product-body">
-                                <h2 class="product-name"><a href="#">Red Dead Redemption</a></h2>
-                                <h3 class="product-price">799000 <del class="product-old-price"> 899000</del></h3>
-                                <div class="product-rating">
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
+                            <div class="product product-widget">
+                                <div class="product-thumb">
+                                    <img src="{{ asset('frontend/img/rdr2icon.jpg') }}" style="border-radius:10px" alt="Red Dead Redemption">
+                                </div>
+                                <div class="product-body">
+                                    <h2 class="product-name"><a href="#">Red Dead Redemption</a></h2>
+                                    <h3 class="product-price">799000 <del class="product-old-price">899000</del></h3>
                                 </div>
                             </div>
-                        </div>
-                        <!-- /widget product -->
+                        @endisset
                     </div>
                     <!-- /aside widget -->
                     <!-- aside widget -->
@@ -399,9 +516,26 @@ Ingin update game terbaru, diskon eksklusif, atau sekadar ngobrol bareng sesama 
     <script src="{{ asset('frontend/js/jquery.zoom.min.js') }}"></script>
     <script src="{{ asset('frontend/js/main.js') }}"></script>
     <a href="#home" onclick="scrollToSection('home')">BERANDA</a>
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
 
+        function resetBerandaPosition() {
+            if (window.location.pathname === '/beranda' || window.location.pathname === '/') {
+                window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+            }
+        }
 
-</script>
+        window.addEventListener('DOMContentLoaded', resetBerandaPosition);
+        window.addEventListener('load', resetBerandaPosition);
+        window.addEventListener('pageshow', resetBerandaPosition);
+        window.addEventListener('afterprint', resetBerandaPosition);
+        window.setTimeout(resetBerandaPosition, 100);
+        window.setTimeout(resetBerandaPosition, 500);
+        window.setTimeout(resetBerandaPosition, 1000);
+        window.setTimeout(resetBerandaPosition, 2000);
+    </script>
 
 </body>
 
