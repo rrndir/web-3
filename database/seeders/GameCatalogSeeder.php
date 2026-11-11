@@ -11,7 +11,7 @@ class GameCatalogSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::where('role', 1)->first();
+        $admin = User::where('role', '1')->first();
         if (!$admin) {
             $this->command->error('Admin user is required before seeding the game catalog.');
             return;

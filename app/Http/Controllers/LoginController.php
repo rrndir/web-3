@@ -24,7 +24,7 @@ class LoginController extends Controller
         if (Auth::attempt([
             'email' => $credentials['email'],
             'password' => $credentials['password'],
-            'role' => 1,
+            'role' => '1',
         ])) {
             if (Auth::user()->status == 0) {
                 Auth::logout();

@@ -63,12 +63,18 @@
                             <button class="main-btn icon-btn"><i class="fa 
                             fa-search-plus"></i></button> 
                         </a> 
-                        <form action="{{ route('order.addToCart', $row->id) }}" method="post"
-                            style="display: inline-block;" title="Pesan Ke Aplikasi">
-                            @csrf
-                            <button type="submit" class="primary-btn add-to-cart"><i
-                                class="fa fa-shopping-cart"></i> Pesan</button>
-                        </form>
+                        @if(Auth::check() && (string) Auth::user()->role === '2')
+                            <form action="{{ route('order.addToCart', $row->id) }}" method="post" class="js-add-to-cart" style="display: inline-block;">
+                                @csrf
+                                <button type="submit" class="primary-btn add-to-cart" {{ $row->stok < 1 ? 'disabled' : '' }}>
+                                    <i class="fa fa-shopping-cart"></i> {{ $row->stok < 1 ? 'Stok Habis' : 'Tambah ke Keranjang' }}
+                                </button>
+                            </form>
+                        @else
+                            <a class="primary-btn add-to-cart" href="{{ route('customer.login', ['redirect' => route('produk.detail', $row->id, false)]) }}">
+                                <i class="fa fa-shopping-cart"></i> Masuk untuk Membeli
+                            </a>
+                        @endif
  
                     </div> 
                 </div> 

@@ -72,8 +72,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Berat</label>
-                                    <input type="text" onkeypress="return hanyaAngka(event)" name="berat" value="{{ old('berat') }}" class="form-control @error('berat') is-invalid @enderror" placeholder="Masukkan Berat Produk">
+                                    <label>Berat (gram)</label>
+                                    <input type="number" min="1" step="1" name="berat" value="{{ old('berat') }}" class="form-control @error('berat') is-invalid @enderror" placeholder="Contoh: 500">
                                     @error('berat')
                                     <span class="invalid-feedback alert-danger" role="alert">
                                         {{ $message }}

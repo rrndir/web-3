@@ -27,6 +27,20 @@
                     <h2 class="product-name">
                         <a href="{{ route('produk.detail', $row->id) }}">{{ $row->nama_produk }}</a>
                     </h2>
+                    <div class="product-btns">
+                        @if(Auth::check() && (string) Auth::user()->role === '2')
+                            <form action="{{ route('order.addToCart', $row->id) }}" method="post" class="js-add-to-cart">
+                                @csrf
+                                <button type="submit" class="primary-btn add-to-cart" {{ $row->stok < 1 ? 'disabled' : '' }}>
+                                    <i class="fa fa-shopping-cart"></i> {{ $row->stok < 1 ? 'Stok Habis' : 'Tambah ke Keranjang' }}
+                                </button>
+                            </form>
+                        @else
+                            <a class="primary-btn add-to-cart" href="{{ route('customer.login', ['redirect' => route('produk.detail', $row->id, false)]) }}">
+                                <i class="fa fa-shopping-cart"></i> Masuk untuk Membeli
+                            </a>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

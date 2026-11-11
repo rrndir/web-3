@@ -20,7 +20,21 @@ class Order extends Model
         'estimasi_ongkir',
         'total_berat',
         'alamat',
-        'pos'
+        'pos',
+        'telepon_penerima',
+        'payment_status',
+        'payment_proof_path',
+        'payment_submitted_at',
+        'paid_at',
+        'shipped_at',
+        'completed_at',
+        'fulfillment_type',
+        'digital_delivery_codes',
+        'destination_province_id',
+        'destination_province_name',
+        'destination_city_id',
+        'destination_city_name',
+        'shipping_service_code',
     ];
 
     public function orderItems()
@@ -32,4 +46,11 @@ class Order extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    protected $casts = [
+        'payment_submitted_at' => 'datetime',
+        'paid_at' => 'datetime',
+        'shipped_at' => 'datetime',
+        'completed_at' => 'datetime',
+    ];
 }

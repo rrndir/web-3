@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use App\Helpers\ImageHelper;
 // use App\Models\Kategori;
 
@@ -87,31 +89,38 @@ class CustomerController extends Controller
             $registeredUser = User::where('email', $socialUser->email)->first();
 
             if (!$registeredUser) {
-                // Buat user baru
-                $user = User::create([
-                    'nama' => $socialUser->name,
-                    'email' => $socialUser->email,
-                    'role' => '2', // Role customer
-                    'status' => 1, // Status aktif
-                    'password' => Hash::make('default_password'), // Password default (opsional)
-                ]);
+                $registeredUser = DB::transaction(function () use ($socialUser) {
+                    $user = User::create([
+                        'nama' => $socialUser->name,
+                        'email' => $socialUser->email,
+                        'role' => '2',
+                        'status' => 1,
+                        'password' => Hash::make(Str::random(40)),
+                    ]);
 
-                // Buat data customer
-                Customer::create([
-                    'user_id' => $user->id,
-                    'google_id' => $socialUser->id,
-                    'google_token' => $socialUser->token
-                ]);
+                    Customer::create([
+                        'user_id' => $user->id,
+                        'google_id' => $socialUser->id,
+                        'google_token' => $socialUser->token,
+                    ]);
 
-                // Login pengguna baru
-                Auth::login($user);
+                    return $user;
+                });
             } else {
-                // Jika email sudah terdaftar, langsung login
-                Auth::login($registeredUser);
+                if ((string) $registeredUser->role !== '2' || !$registeredUser->status) {
+                    return redirect('/beranda')->with('msgError', 'Akun ini tidak dapat digunakan untuk login customer.');
+                }
+
+                Customer::firstOrCreate(
+                    ['user_id' => $registeredUser->id],
+                    ['google_id' => $socialUser->id, 'google_token' => $socialUser->token]
+                );
             }
 
-            // Redirect ke halaman utama
-            return redirect()->intended('beranda');
+            Auth::login($registeredUser);
+            request()->session()->regenerate();
+
+            return redirect()->intended(route('beranda'));
         } catch (\Exception $e) {
             // Redirect ke halaman utama jika terjadi kesalahan
             return redirect('/')->with('error', 'Terjadi kesalahan saat login dengan Google.');

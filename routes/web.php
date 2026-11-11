@@ -9,19 +9,8 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\OrderController;
-
-use Illuminate\Support\Facades\Http;
-
-Route::get('/list-ongkir', function () {
-    $response = Http::withHeaders([
-        'key' => 'rvcH6BhS88b849394055016cw9zx3R1J' // GANTI dengan API key asli dari RajaOngkir
-    ])->get('https://api.rajaongkir.com/starter/province');
-
-    dd($response->json());
-});
-
-
-
+use App\Http\Controllers\CustomerAuthController;
+use App\Http\Controllers\Backend\OrderController as BackendOrderController;
 
 Route::get('/', function () {
     // return view('welcome');
@@ -32,6 +21,17 @@ Route::get('backend/beranda', [BerandaController::class, 'berandaBackend'])->nam
 Route::get('backend/login', [LoginController::class, 'loginBackend'])->name('backend.login');
 Route::post('backend/login', [LoginController::class, 'authenticateBackend'])->name('backend.login');
 Route::post('backend/logout', [LoginController::class, 'logoutBackend'])->name('backend.logout');
+Route::middleware(['auth', 'is.admin'])->prefix('backend')->name('backend.')->group(function () {
+    Route::get('orders', [BackendOrderController::class, 'index'])->name('order.index');
+    Route::get('orders/{id}', [BackendOrderController::class, 'show'])->name('order.show');
+    Route::post('orders/{id}/shipping-options', [BackendOrderController::class, 'shippingOptions'])->name('order.shipping-options');
+    Route::put('orders/{id}/shipping', [BackendOrderController::class, 'updateShipping'])->name('order.shipping');
+    Route::put('orders/{id}/payment', [BackendOrderController::class, 'reviewPayment'])->name('order.payment');
+    Route::put('orders/{id}/ship', [BackendOrderController::class, 'ship'])->name('order.ship');
+    Route::put('orders/{id}/digital-delivery', [BackendOrderController::class, 'deliverDigital'])->name('order.digital-delivery');
+    Route::put('orders/{id}/complete', [BackendOrderController::class, 'complete'])->name('order.complete');
+    Route::get('orders/{id}/payment-proof', [BackendOrderController::class, 'downloadPaymentProof'])->name('order.payment-proof');
+});
 
 // Route untuk User
 // Route::resource('backend/user', UserController::class)->middleware('auth');
@@ -41,6 +41,10 @@ Route::get('backend/laporan/formuser', [UserController::class, 'formUser'])->nam
 Route::post('backend/laporan/cetakuser', [UserController::class, 'cetakUser'])->name('backend.laporan.cetakuser')->middleware('auth');
 
 // Route untuk Customer
+Route::get('/customer/login', [CustomerAuthController::class, 'showLogin'])->name('customer.login');
+Route::post('/customer/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
+Route::get('/customer/register', [CustomerAuthController::class, 'showRegistration'])->name('customer.register');
+Route::post('/customer/register', [CustomerAuthController::class, 'register'])->name('customer.register.submit');
 Route::resource('backend/customer', CustomerController::class, ['as' => 'backend'])->middleware('auth');
 // Route untuk menampilkan halaman akun customer 
 Route::get('/customer/akun/{id}', [CustomerController::class, 'akun'])->name('customer.akun')->middleware('is.customer'); 
@@ -61,28 +65,21 @@ Route::get('/lokasi', [LokasiController::class, 'index'])->name('lokasi');
 
 // Group route untuk customer
 Route::middleware('is.customer')->group(function () {
-    Route::get('/customer/akun/{id}', [CustomerController::class, 'akun'])->name('customer.akun');
-    Route::put('/customer/updateakun/{id}', [CustomerController::class, 'updateAkun'])->name('customer.updateakun');
-
     // Route untuk menambahkan produk ke keranjang
     Route::post('add-to-cart/{id}', [OrderController::class, 'addToCart'])->name('order.addToCart');
 
     // Route untuk keranjang belanja
     Route::get('cart', [OrderController::class, 'viewCart'])->name('order.cart');
+    Route::get('checkout', [OrderController::class, 'checkout'])->name('order.checkout');
+    Route::post('checkout', [OrderController::class, 'placeOrder'])->name('order.place');
+    Route::get('checkout/shipping-destinations', [OrderController::class, 'shippingDestinations'])->name('order.shipping-destinations');
+    Route::post('checkout/shipping-options', [OrderController::class, 'checkoutShippingOptions'])->name('order.checkout-shipping-options');
+    Route::get('orders', [OrderController::class, 'orders'])->name('order.history');
+    Route::get('orders/{id}', [OrderController::class, 'showOrder'])->name('order.show');
+    Route::post('orders/{id}/payment-proof', [OrderController::class, 'uploadPaymentProof'])->name('order.payment-proof.upload');
     Route::put('cart/update/{id}', [OrderController::class, 'updateCart'])->name('order.updateCart');
     Route::delete('cart/remove/{id}', [OrderController::class, 'removeFromCart'])->name('order.removeFromCart');
-    Route::post('cart/shipping', [OrderController::class, 'chooseShipping'])->name('order.chooseShipping');
 });
-
-
-Route::get('/list-ongkir', function () {
-    $response = Http::withHeaders([
-        'key' => 'rvcH6BhS88b849394055016cw9zx3R1J' // GANTI dengan API key asli dari RajaOngkir
-    ])->get('https://api.rajaongkir.com/starter/province');
-
-    dd($response->json());
-});
-
 
 
 // Route untuk menambahkan foto

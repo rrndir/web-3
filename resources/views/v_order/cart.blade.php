@@ -18,22 +18,7 @@
             </div>
         @endif
 
-        {{-- Pesan Error --}}
-        @if(session()->has('error'))
-            <div class="alert alert-danger alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <strong>{{ session('error') }}</strong>
-            </div>
-        @endif
-
         @if($order && $order->orderItems->count() > 0)
-        @php
-            $totalHarga = 0;
-            $totalBerat = 0;
-        @endphp
-
         <table class="shopping-cart-table table">
             <thead>
                 <tr>
@@ -47,10 +32,6 @@
             </thead>
             <tbody>
                 @foreach($order->orderItems as $item)
-                @php
-                    $totalHarga += $item->harga * $item->quantity;
-                    $totalBerat += $item->produk->berat * $item->quantity;
-                @endphp
                 <tr>
                     <td class="thumb">
                         <img src="{{ asset('storage/img-produk/thumb_sm_' . $item->produk->foto) }}" alt="">
@@ -59,7 +40,7 @@
                         <a>{{ $item->produk->nama_produk }}</a>
                         <ul>
                             <li><span>Berat: {{ $item->produk->berat }} Gram</span></li>
-                            <li><span>Stok: {{ $item->produk->stok }} Gram</span></li>
+                            <li><span>Stok tersedia: {{ $item->produk->stok }}</span></li>
                         </ul>
                     </td>
                     <td class="price text-center">
@@ -92,18 +73,18 @@
             </tbody>
         </table>
 
-        {{-- Pilih Pengiriman --}}
-        <form action="{{ route('order.chooseShipping') }}" method="post">
-            @csrf
-            <input type="hidden" name="total_price" value="{{ $totalHarga }}">
-            <input type="hidden" name="total_weight" value="{{ $totalBerat }}">
-            <div class="pull-right mt-3">
-                <button class="primary-btn">Pilih Pengiriman</button>
-            </div>
-        </form>
+        <div class="order-summary">
+            <h4>Total: Rp. {{ number_format($order->total_harga, 0, ',', '.') }}</h4>
+            <p class="text-muted">Ongkir akan dihitung admin setelah alamat pengiriman dikirim.</p>
+        </div>
+        <a href="{{ route('order.checkout') }}" class="primary-btn">Lanjut ke Checkout</a>
+        <a href="{{ route('produk.all') }}" class="primary-btn">Lanjut Belanja</a>
 
         @else
             <p class="text-center">Keranjang belanja kosong.</p>
+            <div class="text-center">
+                <a href="{{ route('produk.all') }}" class="primary-btn">Lihat Produk</a>
+            </div>
         @endif
     </div>
 </div>

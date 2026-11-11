@@ -47,12 +47,15 @@ class ProdukController extends Controller
             'nama_produk' => 'required|max:255|unique:produk',
             'detail' => 'required',
             'harga' => 'required',
-            'berat' => 'required',
+            'berat' => ['required', 'integer', 'min:1'],
             'stok' => 'required',
             'foto' => 'required|image|mimes:jpeg,jpg,png,gif|file|max:1024',
         ], $messages = [
             'foto.image' => 'Format gambar gunakan file dengan ekstensi jpeg, jpg, png, atau gif.',
-            'foto.max' => 'Ukuran file gambar Maksimal adalah 1024 KB.'
+            'foto.max' => 'Ukuran file gambar Maksimal adalah 1024 KB.',
+            'berat.required' => 'Berat produk wajib diisi dalam gram.',
+            'berat.integer' => 'Berat produk harus berupa angka bulat dalam gram.',
+            'berat.min' => 'Berat produk minimal 1 gram.'
         ]);
         $validatedData['status'] = 0;
         $validatedData['user_id'] = auth()->id();
@@ -132,13 +135,16 @@ class ProdukController extends Controller
             'status' => 'required',
             'detail' => 'required',
             'harga' => 'required',
-            'berat' => 'required',
+            'berat' => ['required', 'integer', 'min:1'],
             'stok' => 'required',
             'foto' => 'image|mimes:jpeg,jpg,png,gif|file|max:1024',
         ];
         $messages = [
             'foto.image' => 'Format gambar gunakan file dengan ekstensi jpeg, jpg, png, atau gif.',
-            'foto.max' => 'Ukuran file gambar Maksimal adalah 1024 KB.'
+            'foto.max' => 'Ukuran file gambar Maksimal adalah 1024 KB.',
+            'berat.required' => 'Berat produk wajib diisi dalam gram.',
+            'berat.integer' => 'Berat produk harus berupa angka bulat dalam gram.',
+            'berat.min' => 'Berat produk minimal 1 gram.'
         ];
         $validatedData['user_id'] = auth()->id();
         $validatedData = $request->validate($rules, $messages);

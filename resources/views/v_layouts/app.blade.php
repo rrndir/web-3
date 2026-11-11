@@ -140,6 +140,11 @@
             {{ session('msgError') }}
         </div>
     @endif
+    @if(session()->has('error'))
+        <div class="container">
+            <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+        </div>
+    @endif
     <!-- HEADER -->
     <header>
         <!-- top Header -->
@@ -177,7 +182,7 @@
                 <ul class="header-btns" style="display: flex; align-items: center; gap: 15px;">
                     <!-- Cart -->
                     <li class="header-cart dropdown default-dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                        <a href="{{ route('order.cart') }}">
                             <div class="header-btns-icon">
                                 <i class="fa fa-shopping-cart"></i>
                             </div>
@@ -196,7 +201,7 @@
                             </div>
                             <ul class="custom-menu">
                                 <li><a href="{{ route('customer.akun', ['id' => Auth::user()->id]) }}"><i class="fa fa-user-o"></i> Akun Saya</a></li>
-                                <li><a href="#"><i class="fa fa-check"></i> History</a></li>
+                                <li><a href="{{ route('order.history') }}"><i class="fa fa-check"></i> Pesanan Saya</a></li>
                                 <li>
                                     <a href="#" onclick="event.preventDefault(); document.getElementById('keluar-app').submit();">
                                         <i class="fa fa-power-off"></i> Keluar
@@ -215,7 +220,7 @@
                                 </div>
                                 <strong class="text-uppercase">Akun Saya<i class="fa fa-caret-down"></i></strong>
                             </div>
-                            <a href="{{ route('auth.redirect') }}" class="text-uppercase">Login</a>
+                            <a href="{{ route('customer.login') }}" class="text-uppercase">Masuk / Daftar</a>
                         </li>
                     @endif
 
@@ -515,8 +520,59 @@ Ingin update game terbaru, diskon eksklusif, atau sekadar ngobrol bareng sesama 
     <script src="{{ asset('frontend/js/nouislider.min.js') }}"></script>
     <script src="{{ asset('frontend/js/jquery.zoom.min.js') }}"></script>
     <script src="{{ asset('frontend/js/main.js') }}"></script>
+    <script src="{{ asset('sweetalert/sweetalert2.all.min.js') }}"></script>
     <a href="#home" onclick="scrollToSection('home')">BERANDA</a>
     <script>
+        document.querySelectorAll('.js-add-to-cart').forEach(function (form) {
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const button = form.querySelector('button[type="submit"]');
+                const originalButtonText = button.innerHTML;
+                button.disabled = true;
+                button.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Menambahkan...';
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new FormData(form)
+                    });
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.message || 'Produk gagal ditambahkan ke keranjang.');
+                    }
+
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil ditambahkan',
+                        text: result.product_name + ' sekarang ada di keranjang Anda.',
+                        showCancelButton: true,
+                        confirmButtonText: 'Beli sekarang',
+                        cancelButtonText: 'Lanjut belanja',
+                        reverseButtons: true
+                    }).then(function (choice) {
+                        if (choice.isConfirmed) {
+                            window.location.href = result.checkout_url;
+                        }
+                    });
+                } catch (error) {
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Tidak dapat menambahkan produk',
+                        text: error.message || 'Terjadi kesalahan. Silakan coba lagi.'
+                    });
+                } finally {
+                    button.disabled = false;
+                    button.innerHTML = originalButtonText;
+                }
+            });
+        });
+
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }

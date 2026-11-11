@@ -11,10 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_item', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // The order_item table is already created by the 2025 order item migration.
     }
 
     /**
@@ -22,6 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_item');
+        // This legacy duplicate migration does not own the order_item table.
     }
 };

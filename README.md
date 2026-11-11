@@ -14,10 +14,14 @@
 - Filter produk berdasarkan kategori
 - Halaman detail untuk setiap game
 - Tampilan grid responsif untuk desktop dan mobile
-- Login akun pelanggan dengan Google
+- Pendaftaran dan login pelanggan dengan email/password, serta Google jika OAuth dikonfigurasi
 - Panel admin untuk mengelola kategori dan produk
 - Status publikasi produk agar hanya produk aktif yang ditampilkan
-- Keranjang belanja, akun pelanggan, dan lokasi toko
+- Keranjang belanja pelanggan dengan pemeriksaan stok dan pembatasan akses per akun
+- Checkout fisik dengan estimasi tarif kurir RajaOngkir, pembayaran transfer bank, dan unggah bukti transfer
+- Pilihan pemenuhan pesanan fisik (ongkir/resi) atau digital (kode game per unit)
+- Panel admin untuk verifikasi pembayaran, pengiriman fisik, dan penyerahan kode digital
+- Akun pelanggan dan informasi lokasi toko
 
 ## Teknologi
 
@@ -125,6 +129,35 @@ Untuk build asset production:
 ```bash
 npm run build
 ```
+
+### Pengaturan transfer bank dan pesanan
+
+Isi konfigurasi rekening pada `.env` sebelum menerima pembayaran. Jangan gunakan nomor rekening contoh:
+
+```env
+SHOP_BANK_NAME=
+SHOP_BANK_ACCOUNT_NUMBER=
+SHOP_BANK_ACCOUNT_NAME="Warung Game"
+```
+
+Migrasi untuk checkout, pembayaran, dan pilihan fisik/digital dapat dijalankan dengan:
+
+```bash
+php artisan migrate
+```
+
+Untuk pengiriman fisik, customer memilih lokasi tujuan, kurir, dan layanan beserta tarif/estimasi RajaOngkir saat checkout. Total yang mencakup ongkir diverifikasi kembali ke API ketika pesanan dibuat, lalu customer langsung diarahkan ke halaman pembayaran. Setelah bukti pembayaran disetujui admin, admin mengatur pengiriman dengan memasukkan nomor resi. Pengiriman digital tidak memerlukan alamat maupun ongkir.
+
+Atur API RajaOngkir Komerce di `.env` server (jangan kirim API key melalui chat atau commit ke Git):
+
+```env
+RAJAONGKIR_API_KEY=
+RAJAONGKIR_BASE_URL=https://rajaongkir.komerce.id/api/v1
+# Isi ID kecamatan/kelurahan asal sesuai lokasi toko dari endpoint pencarian tujuan.
+RAJAONGKIR_ORIGIN_CITY_ID=
+```
+
+Endpoint yang digunakan adalah `/destination/domestic-destination` untuk pencarian lokasi dan `/calculate/domestic-cost` untuk tarif. Lokasi asal harus memakai ID lokasi (kecamatan/kelurahan) yang sesuai alamat toko; `Jakarta Barat` saja belum cukup spesifik untuk kalkulasi. Cari ID dengan endpoint pencarian pada dokumentasi Komerce menggunakan API key milik sendiri. Pastikan paket/API key mengaktifkan layanan ini. Setelah mengubah `.env`, jalankan `php artisan config:clear`.
 
 ## Login Admin
 
